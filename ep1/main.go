@@ -40,12 +40,14 @@ In that case you can imagine each go routine to be a separate node. Then you are
 mapping this oversimplified code to a distributed system, how do we maintain a distributed storage to replicate VaultKeyMap and VaultKeyMutex
 with the appropriate locking mechanism. Well, technologies like Redis provides a mechanism for distributed locking using Redis-based distributed locks.
 
-Speaking of redis distributed locks, there is a serious bottle neck even in this oversimplified code that is worth highlighting...
+Speaking of redis distributed locks, there is a serious bottleneck in this oversimplified code that is worth highlighting...
 
-Each manager locks the client, to process the transactions associated with that client alone. How long should this processing take? Given that we are even
+Each manager locks the client, to process the transactions associated with that client alone. How long should this processing take? Given that we are
 retrying calls, what if the calls are taking longer than expected? Just imagine something goes wrong and the manager never announces that he is done? This is
 a common problem when dealing with locks. Redis locks typically have an expiration to prevent scenarios where a lock is held indefinitely due to a crashed node or long processing time.
 
+
+How really are we ensuring fairness ?
 
 There are two primary ways we are ensuring fairness in here,
 
@@ -55,7 +57,7 @@ There are two primary ways we are ensuring fairness in here,
 This ensures that each client’s transactions are processed fairly and in the order they are received, avoiding race conditions or out-of-order execution.
 
 
-...and that's episode 1, I hope to have the time during the week to come organize the above better
+...and that's episode 1, I hope to have the time during the week to come organize the above
 */
 
 // represents a batch of transactions for a client
