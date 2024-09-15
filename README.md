@@ -67,8 +67,6 @@ In this episode, I implemented a simple rate-limiting system that shares state a
 📂 [Link to Episode 2 Code](./ep2)
 
 
----
-
 
 ---
 
