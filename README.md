@@ -7,6 +7,7 @@ Welcome to the **Engineering Gotchas** series, where I look into often-overlooke
 - [Overview](#overview)
 - [Episodes](#episodes)
   - [Episode 1: Ensuring Fairness in Asynchronous Processing](#episode-1-ensuring-fairness-in-asynchronous-processing)
+  - [Episode 2: Implementing Rate Limiting Across Multiple Servers](#episode-2-implementing-rate-limiting-across-multiple-servers)
 - [How to Navigate the Series](#how-to-navigate-the-series)
 - [Contributing](#contributing)
 
@@ -43,7 +44,35 @@ To address this, This episode involves the design of a system where transaction 
 📂 [Link to Episode 1 Code](./ep1)
 
 
+### Episode 2: Implementing Rate Limiting Across Multiple Servers
+
+**Scenario**:  
+You're tasked with implementing rate limiting in a distributed API system. Your API is behind a load balancer, and incoming requests are routed to multiple servers. The goal is to limit the number of requests a user can make within a specific time frame (say 100 requests per minute). How do you ensure that the rate limit is correctly enforced across all servers?
+
+An initial approach might involve implementing rate limiting on each server individually. However, this leads to a challenge:
+
+❓ **How do you maintain a consistent rate limit across all servers when each server has its own memory and state?**  
+With each server enforcing its own rate limit, a user could potentially make the maximum allowed number of requests to each server, effectively bypassing the intended global limit.
+
+**Trick**:  
+In this episode, I implemented a simple rate-limiting system that shares state across all servers. By using a central data store (a map was used in the code), we can maintain consistent rate-limiting counters that all servers access and update in real-time.
+
+**The solution includes**:
+- Centralized Counter: Use of a map to store and update the request counts for each user
+- Atomic Operations: Utilize locks to safely increment counters and set expiration times without race conditions.
+- Fallback Mechanism: Implement a fallback in case central storage is unavailable to ensure the API remains operational.
+
+🔑 **Follow-up**: What happens if Redis (or our central state store) fails? How do we ensure graceful degradation?
+
+📂 [Link to Episode 2 Code](./ep2)
+
+
 ---
+
+
+---
+
+
 
 ## How to Navigate the Series
 
